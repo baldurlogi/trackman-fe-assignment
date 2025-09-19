@@ -1,9 +1,36 @@
+import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import CardGrid from "@/components/ui/CardGrid";
-import { courses } from "@/constants";
 import { Link } from "react-router-dom";
+import { list, STORAGE_KEY } from "@/services/storage";
+import { getStatus } from "@/utils/time";
+import type { CardData } from "@/types";
 
 export default function FacilitiesListPage() {
+  const [cards, setCards] = useState<CardData[]>([]);
+
+  const hydrate = () => {
+    const facilities = list();
+    const mapped: CardData[] = facilities.map((f) => ({
+      id: f.id,
+      title: f.name,
+      status: getStatus(f.openingTime, f.closningTime) === "Open" ? "Open" : "Closed",
+      image: f.imageUrl,
+      address: f.address,
+    }));
+    setCards(mapped);
+  }
+
+  useEffect(() => {
+    hydrate();
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) hydrate();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [])
+
   return (
     <div className="px-30">
       <div className="py-6 flex justify-end">
@@ -15,9 +42,19 @@ export default function FacilitiesListPage() {
           />
         </Link>
       </div>
-      <div>
-        <CardGrid cards={courses} />
-      </div>
+
+      {cards.length === 0 ? (
+        <div className="py-12 text-center opacity-80">
+          <p>No facilities yet.</p>
+          <p className="mt-2">
+            <Link to="/facilities/new" className="underline" >
+              Create your first facility
+            </Link>
+          </p>
+        </div>
+      ) : (
+        <CardGrid cards={cards} />
+      )}
     </div>
   );
 }
