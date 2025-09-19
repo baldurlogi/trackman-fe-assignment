@@ -10,7 +10,7 @@ type CardProps = {
 
 const Card = ({ title, status, image, address }: CardProps) => {
   return (
-    <div className="flex flex-col rounded-2xl shadow-sm bg-white p-4">
+    <div className="flex flex-col rounded-2xl shadow-sm bg-white p-4 hover:shadow-2xl">
       {/* Image */}
       <img
         src={image}
@@ -20,13 +20,13 @@ const Card = ({ title, status, image, address }: CardProps) => {
 
       {/* Title + Status */}
       <div className="flex mt-3 items-center justify-between">
-        <h3 className="text-lg font-semibold">{title}</h3>
+        <h2 className="font-semibold">{title}</h2>
         {status && (
-          <span
+          <h3
             className={`font-semibold px-2 py-1 rounded-full ${status === "Closed" ? "bg-error-light text-error" : "bg-success-light text-success"}`}
           >
             {status}
-          </span>
+          </h3>
         )}
       </div>
 
@@ -34,13 +34,13 @@ const Card = ({ title, status, image, address }: CardProps) => {
       <div className="mt-2 flex items-center justify-between">
         <div className="flex item-center gap-2 min-w-0">
           <MapPin size={16} className="text-gray-500 flex-shrink-0" />
-          <p className="truncate whitespace-nowrap text-sm text-gray-700">
+          <h3 className="truncate font-medium whitespace-nowrap text-gray-700">
             {address}
-          </p>
+          </h3>
         </div>
         <div className="flex items-center gap-2">
-          <Button id="delete" icon={<Trash size={16} />} containerClass="rounded-md px-2 py-1 bg-gray-100 text-grey-600" />
-          <Button id="edit" title="Edit" containerClass="rounded-md px-2 py-1 bg-gray-100 text-grey-600" />
+          <Button id="delete" icon={<Trash size={28} />} containerClass="rounded-md px-3 py-1 bg-gray-100 text-grey-600" />
+          <Button id="edit" title="Edit" containerClass="rounded-md px-8 py-1 bg-gray-100 text-grey-600 text-lg" />
         </div>
       </div>
     </div>
