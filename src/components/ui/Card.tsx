@@ -1,12 +1,6 @@
 import Button from "./Button";
 import { MapPin, Trash } from "lucide-react";
-
-type CardProps = {
-  title?: string;
-  status?: "Open" | "Closed";
-  image: string;
-  address: string;
-};
+import type { CardProps } from "@/types";
 
 const Card = ({ title, status, image, address }: CardProps) => {
   return (
@@ -39,8 +33,16 @@ const Card = ({ title, status, image, address }: CardProps) => {
           </h3>
         </div>
         <div className="flex items-center gap-2">
-          <Button id="delete" icon={<Trash size={28} />} containerClass="rounded-md px-3 py-1 bg-gray-100 text-grey-600" />
-          <Button id="edit" title="Edit" containerClass="rounded-md px-8 py-1 bg-gray-100 text-grey-600 text-lg" />
+          <Button
+            id="delete"
+            icon={<Trash size={28} />}
+            containerClass="rounded-md px-3 py-1 bg-gray-100 text-grey-600"
+          />
+          <Button
+            id="edit"
+            title="Edit"
+            containerClass="rounded-md px-8 py-1 bg-gray-100 text-grey-600 text-lg"
+          />
         </div>
       </div>
     </div>

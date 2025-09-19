@@ -5,14 +5,14 @@ import golf4 from "@/assets/golf4.jpg";
 import golf5 from "@/assets/golf5.jpg";
 import golf6 from "@/assets/golf6.jpg";
 
-
 export const courses = [
   {
     id: 1,
     title: "Green Valley Golf Club",
     status: "Closed" as const,
     image: golf1,
-    address: "123 Fairway Drive, Copenhagen, Very Long Street That Will Truncate",
+    address:
+      "123 Fairway Drive, Copenhagen, Very Long Street That Will Truncate",
   },
   {
     id: 2,

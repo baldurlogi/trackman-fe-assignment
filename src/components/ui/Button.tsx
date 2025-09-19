@@ -1,9 +1,4 @@
-type ButtonProps = {
-  id: string;
-  title?: string;
-  icon?: React.ReactNode;
-  containerClass?: string;
-}
+import { type ButtonProps } from "@/types";
 
 const Button = ({ title, id, icon, containerClass }: ButtonProps) => {
   return (
@@ -18,7 +13,7 @@ const Button = ({ title, id, icon, containerClass }: ButtonProps) => {
         </div>
       </span>
     </button>
-  )
-}
+  );
+};
 
-export default Button
+export default Button;
