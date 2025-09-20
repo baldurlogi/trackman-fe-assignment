@@ -1,6 +1,13 @@
 import { create } from "zustand";
+import { devtools, subscribeWithSelector } from "zustand/middleware";
 import type { Facility } from "@/types";
-import * as storage from "@/services/storage";
+import {
+    lsit as storageList,
+    create as storageCreate,
+    update as storageUpdate,
+    remove as storageRemove,
+    replaceAll as storageReplaceAll,
+} from "@/services/storage";
 
 type State = {
     facilities: Facility[];
@@ -9,7 +16,7 @@ type State = {
 
 type Actions = {
     hydrate: () => void;
-    create: (f: Facility) => Facility;
+    create: (f: Facility | Omit<Facility, "id" | "createdAt">) => Facility;
     update: (id: string, patch: Partial<Facility>) => Facility;
     remove: (id: string) => void;
     replaceAll: (next: Facility[]) => void;
@@ -21,56 +28,89 @@ type Actions = {
 
 export type FacilitiesStore = State & Actions;
 
-export const useFacilitiesStore = create<FacilitiesStore>((set, get) => ({
-    facilities: [],
-    hydrated: false,
+export const useFacilitiesStore = create<FacilitiesStore>()(
+    devtools(
+        subscribeWithSelector((set, get) => ({
+            facilities: [],
+            hydrated: false,
 
-    hydrate() {
-        const facilities = storage.list();
-        set({ facilities, hydrated: true });
-    },
+            hydrate() {
+                 const facilities = storageList();
+                 set({ facilities, hydrated: true }, false, "facilities/hydrate");
+            },
 
-    create(f) {
-        storage.create(f);
-        set((s) => ({ facilities: [...s.facilities, f] }));
-        return f;
-    },
+            create(fInput) {
+                const f: Facility = {
+                    id: ("id" in fInput ? fInput.id : undefined) ?? crypto.randomUUID(),
+                    createdAt:
+                        ("createdAt" in fInput ? fInput.createdAt : undefined) ?? new Date(),
+                    ...(fInput as Facility)
+                };
 
-    update(id, patch) {
-        const updated = storage.update(id, patch);
-        set((s) => ({
-            facilities: s.facilities.map((f) => (f.id === id ? updated : f)),
-        }));
-        return updated;
-    },
+                set(
+                    (s) => ({ facilities: [...s.facilities, f] }),
+                    false,
+                    "facilities/create",
+                );
+                storageCreate(f);
+                return f;
+            },
 
-    remove(id) {
-        storage.remove(id);
-        set((s) => ({ facilities: s.facilities.filter((f) => f.id !== id) }));
-    },
+            update(id, patch) {
+                const updated = storageUpdate(id, patch);
 
-    replaceAll(next) {
-        storage.replaceAll(next);
-        set({ facilities: next });
-    },
+                set(
+                    (s) => ({
+                        facilities: s.facilities.map((x) => (x.id === id ? updated : x)),
+                    }),
+                    false,
+                    "facilities/update",
+                );
+                return updated;
+            },
 
-    setDefault(id) {
-        const next = get().facilities.map((f) => ({ ...f, isDefault: f.id === id }));
-        storage.replaceAll(next);
-        set({ facilities: next });
-    },
+            remove(id) {
+                storageRemove(id);
+                set(
+                    (s) => ({
+                        facilities: s.facilities.filter((x) => x.id !== id),
+                    }),
+                    false,
+                    "facilities/remove",
+                );
+            },
 
-    getDefault() {
-        return get().facilities.find((f) => f.isDefault);
-    },
+            setDefault(id) {
+                const next = get().facilities.map((f) => ({
+                    ...f,
+                    isDefault: f.id === id,
+                }));
 
-    getSorted() {
-        const arr = get().facilities.slice();
-        const idx = arr.findIndex((f) => f.isDefault);
-        if (idx > 0) {
-            const [d] = arr.splice(idx, 1);
-            arr.unshift(d);
-        }
-        return arr;
-    },
-}));
+                storageReplaceAll(next);
+
+                set({ facilities: next }, false, "facilities/setDefault");
+            },
+
+            replaceAll(next) {
+                storageReplaceAll(next);
+                set({ facilities: next }, false, "facilities/replaceAll");
+            },
+
+            getDefault() {
+                return get().facilities.find((f) => f.isDefault);
+            },
+
+            getSorted() {
+                const arr = get().facilities.slice();
+                const idx = arr.findIndex((f) => f.isDefault);
+                if (idx > 0) {
+                    const [d] = arr.splice(idx, 1);
+                    arr.unshift(d);
+                }
+                return arr;
+            },
+        })),
+        { name: "facilities" },
+    ),
+);
+
