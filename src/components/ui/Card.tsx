@@ -16,7 +16,7 @@ const Card = ({ facility, onEdit, onDelete, onSetDefault }: Props) => {
 
   const [imgError, setImgError] = useState(false);
 
-  const isOpen = getStatus(openingTime, closingTime) === "open";
+  const isOpen = getStatus(openingTime, closingTime) === "Open";
   const statusLabel = isOpen ? "Open" : "Closed";
 
   const statusClasses = isOpen ? "bg-success-light text-success" : "bg-error-light text-error";
@@ -44,9 +44,9 @@ const Card = ({ facility, onEdit, onDelete, onSetDefault }: Props) => {
           aria-label={isDefault ? "Default facility" : "Set as default"}
           aria-pressed={isDefault}
           onClick={() => !isDefault && onSetDefault(id)}
-          className={`absolute left-3 top-3 inline-flex items-center justify-center h-7 w-7 rounded-full shadow ring-1 ring-black/5 ${isDefault ? "bg-orange-500 text-white" : "bg-white/90 text-gray-600 hover:text-orange-600"}`}
+          className={`absolute left-3 top-3 inline-flex items-center justify-center h-12 w-12 rounded-full shadow ring-1 ring-black/5 ${isDefault ? "bg-orange-500/70 text-white" : "bg-white/90 text-gray-600/70 hover:text-orange-600"}`}
         >
-          <Star className="w-4 h-4 fill-current" aria-hidden />
+          <Star className="w-5 h-5 fill-current" aria-hidden />
         </button>
       </div>
 
@@ -65,7 +65,7 @@ const Card = ({ facility, onEdit, onDelete, onSetDefault }: Props) => {
       {/* Address + actions */}
       <div className="mt-2 flex items-center justify-between">
         <div className="flex items-center gap-2 min-w-0">
-          <MapPin size={16} className="text-gray-500 flex-shrink-0" />
+          <MapPin size={28} className="text-gray-500 flex-shrink-0" />
           <h3 className="truncate font-medium whitespace-nowrap text-gray-700">
             {address}
           </h3>
