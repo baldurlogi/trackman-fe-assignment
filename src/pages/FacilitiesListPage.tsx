@@ -2,24 +2,16 @@ import Button from "@/components/ui/Button";
 import CardGrid from "@/components/ui/CardGrid";
 import { Link, useNavigate } from "react-router-dom";
 import { useFacilitiesStore } from "@/store/facilities";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ConfirmDelete from "@/components/ui/ConfirmDelete";
 
 export default function FacilitiesListPage() {
   const hydrated = useFacilitiesStore((s) => s.hydrated);
-  const facilities = useFacilitiesStore((s) => s.facilities);
+  const facilities = useFacilitiesStore((s) => s.getSorted());
   const remove = useFacilitiesStore((s) => s.remove);
   const navigate = useNavigate();
 
-  const sortedFacilities = useMemo(() => {
-    const arr = facilities.slice();
-    const idx = arr.findIndex((f) => f.isDefault);
-    if (idx > 0) {
-      const [d] = arr.splice(idx, 1);
-      arr.unshift(d);
-    }
-    return arr;
-  }, [facilities]);
+
 
   const [open, setOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -70,7 +62,7 @@ export default function FacilitiesListPage() {
         </div>
       ) : (
         <CardGrid
-          facilities={sortedFacilities}
+          facilities={facilities}
           onEdit={(id) => navigate(`/facilities/${id}/edit`)}
           onDelete={requestDelete}
         />

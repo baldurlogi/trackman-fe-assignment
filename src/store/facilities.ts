@@ -8,6 +8,7 @@ import {
   remove as storageRemove,
   replaceAll as storageReplaceAll,
 } from "@/services/storage";
+import { sortFacilities } from "@/utils/facilities";
 
 type State = {
   facilities: Facility[];
@@ -112,13 +113,7 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
       },
 
       getSorted() {
-        const arr = get().facilities.slice();
-        const idx = arr.findIndex((f) => f.isDefault);
-        if (idx > 0) {
-          const [d] = arr.splice(idx, 1);
-          arr.unshift(d);
-        }
-        return arr;
+        return sortFacilities(get().facilities)
       },
     }),
     { name: "facilities" },
