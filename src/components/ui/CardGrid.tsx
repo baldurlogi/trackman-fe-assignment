@@ -5,10 +5,10 @@ import { useFacilitiesStore } from "@/store/facilities";
 type Props = {
   facilities: Facility[];
   onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
-const CardGrid = ({ facilities, onEdit }: Props) => {
-  const remove = useFacilitiesStore((s) => s.remove);
+const CardGrid = ({ facilities, onEdit, onDelete }: Props) => {
   const setDefault = useFacilitiesStore((s) => s.setDefault);
 
   return (
@@ -18,7 +18,7 @@ const CardGrid = ({ facilities, onEdit }: Props) => {
           key={f.id}
           facility={f}
           onEdit={onEdit ?? (() => {})}
-          onDelete={remove}
+          onDelete={onDelete ?? (() => {})}
           onSetDefault={setDefault}
         />
       ))}

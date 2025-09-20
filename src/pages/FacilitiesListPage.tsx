@@ -2,11 +2,13 @@ import Button from "@/components/ui/Button";
 import CardGrid from "@/components/ui/CardGrid";
 import { Link, useNavigate } from "react-router-dom";
 import { useFacilitiesStore } from "@/store/facilities";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import ConfirmDelete from "@/components/ui/ConfirmDelete";
 
 export default function FacilitiesListPage() {
   const hydrated = useFacilitiesStore((s) => s.hydrated);
   const facilities = useFacilitiesStore((s) => s.facilities);
+  const remove = useFacilitiesStore((s) => s.remove);
   const navigate = useNavigate();
 
   const sortedFacilities = useMemo(() => {
@@ -18,6 +20,30 @@ export default function FacilitiesListPage() {
     }
     return arr;
   }, [facilities]);
+
+  const [open, setOpen] = useState(false);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const pendingName = pendingId
+    ? (facilities.find((f) => f.id === pendingId)?.name ?? "")
+    : "";
+
+  function requestDelete(id: string) {
+    setPendingId(id);
+    setOpen(true);
+  }
+
+  async function confirmDelete() {
+    if (!pendingId || isDeleting) return;
+    setIsDeleting(true);
+    try {
+      remove(pendingId); // store will auto-reassign default if needed
+    } finally {
+      setIsDeleting(false);
+      setPendingId(null);
+    }
+  }
 
   return (
     <div className="px-30">
@@ -46,8 +72,32 @@ export default function FacilitiesListPage() {
         <CardGrid
           facilities={sortedFacilities}
           onEdit={(id) => navigate(`/facilities/${id}/edit`)}
+          onDelete={requestDelete}
         />
       )}
+
+      <ConfirmDelete
+        open={open}
+        onOpenChange={(o) => {
+          if (!o) setPendingId(null);
+          setOpen(o);
+        }}
+        title="Delete Facility"
+        description={
+          <div>
+            <p className="text-xl">Are you sure you want to delete this facility? This action cannot be undone.</p>
+            {pendingName && (
+              <p className="mt-2 text-xl">
+                Facility: <span className="font-bold">{pendingName}</span>
+              </p>
+            )}
+          </div>
+        }
+        confirmLabel="Yes, Delete"
+        cancelLabel="Cancel"
+        confirmDisabled={isDeleting}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }
