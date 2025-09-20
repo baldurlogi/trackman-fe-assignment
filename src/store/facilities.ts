@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, subscribeWithSelector } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import type { Facility } from "@/types";
 import {
   list as storageList,
@@ -30,24 +30,24 @@ export type FacilitiesStore = State & Actions;
 
 export const useFacilitiesStore = create<FacilitiesStore>()(
   devtools(
-    subscribeWithSelector((set, get) => ({
+    (set, get) => ({
       facilities: [],
       hydrated: false,
 
+      // ---- hydration ----
       hydrate() {
         const facilities = storageList();
         set({ facilities, hydrated: true }, false, "facilities/hydrate");
       },
 
+      // ---- create ----
       create(fInput) {
         const { id, createdAt, ...rest } = fInput as Facility;
-
         const f: Facility = {
           ...rest,
           id: id ?? crypto.randomUUID(),
           createdAt: createdAt ?? new Date(),
         };
-
         set(
           (s) => ({ facilities: [...s.facilities, f] }),
           false,
@@ -57,9 +57,9 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
         return f;
       },
 
+      // ---- update ----
       update(id, patch) {
         const updated = storageUpdate(id, patch);
-
         set(
           (s) => ({
             facilities: s.facilities.map((x) => (x.id === id ? updated : x)),
@@ -70,6 +70,7 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
         return updated;
       },
 
+      // ---- remove (auto-reassign default if needed) ----
       remove(id) {
         const curr = get().facilities;
         const target = curr.find((x) => x.id === id);
@@ -79,7 +80,7 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
 
         if (target.isDefault && remaining.length > 0) {
           const next = reassignRandomDefault(remaining);
-          storageReplaceAll(next);
+          storageReplaceAll(next); // atomic
           set({ facilities: next }, false, "facilities/remove+reassignDefault");
         } else {
           storageRemove(id);
@@ -87,22 +88,25 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
         }
       },
 
+      // ---- set default (idempotent) ----
       setDefault(id) {
-        const next = get().facilities.map((f) => ({
-          ...f,
-          isDefault: f.id === id,
-        }));
+        const curr = get().facilities;
+        const exists = curr.some((f) => f.id === id);
+        const already = curr.find((f) => f.isDefault)?.id === id;
+        if (!exists || already) return; // no-op
 
-        storageReplaceAll(next);
-
+        const next = curr.map((f) => ({ ...f, isDefault: f.id === id }));
+        storageReplaceAll(next); // atomic
         set({ facilities: next }, false, "facilities/setDefault");
       },
 
+      // ---- replace all ----
       replaceAll(next) {
         storageReplaceAll(next);
         set({ facilities: next }, false, "facilities/replaceAll");
       },
 
+      // ---- getters (avoid in selectors) ----
       getDefault() {
         return get().facilities.find((f) => f.isDefault);
       },
@@ -116,7 +120,7 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
         }
         return arr;
       },
-    })),
+    }),
     { name: "facilities" },
   ),
 );

@@ -19,5 +19,5 @@ export function isOpenAt(nowMinutes: number, openingTime: string, closingTime: s
 }
 
 export function getStatus(openingTime: string, closingTime: string, at: Date = new Date()) {
-    return isOpenAt(getNowMinutes(at), openingTime, closingTime) ? "Open" : "Closed";
+    return isOpenAt(getNowMinutes(at), openingTime, closingTime) ? "open" : "closed";
 }
