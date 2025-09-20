@@ -4,7 +4,7 @@ export function sortFacilities(list: Facility[]): Facility[] {
   if (list.length === 0) return list;
   const arr = [...list];
 
-  // stable order for non-defaults: by name (or change to createdAt)
+  // stable order for non-defaults: by name
   arr.sort((a, b) => a.name.localeCompare(b.name));
 
   const idx = arr.findIndex((f) => f.isDefault);

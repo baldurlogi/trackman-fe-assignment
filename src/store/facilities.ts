@@ -27,6 +27,9 @@ type Actions = {
   getSorted: () => Facility[];
 };
 
+let cachedSorted: Facility[] = [];
+let lastFacilities: Facility[] = [];
+
 export type FacilitiesStore = State & Actions;
 
 export const useFacilitiesStore = create<FacilitiesStore>()(
@@ -119,6 +122,14 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
     { name: "facilities" },
   ),
 );
+
+export const selectSortedFacilities = (s: FacilitiesStore) => {
+  if (s.facilities !== lastFacilities) {
+    lastFacilities = s.facilities;
+    cachedSorted = sortFacilities(s.facilities);
+  }
+  return cachedSorted;
+};
 
 function reassignRandomDefault(remaining: Facility[]): Facility[] {
   if (remaining.length === 0) return remaining;

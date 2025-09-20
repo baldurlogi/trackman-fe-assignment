@@ -1,17 +1,15 @@
 import Button from "@/components/ui/Button";
 import CardGrid from "@/components/ui/CardGrid";
 import { Link, useNavigate } from "react-router-dom";
-import { useFacilitiesStore } from "@/store/facilities";
+import { useFacilitiesStore, selectSortedFacilities } from "@/store/facilities";
 import { useState } from "react";
 import ConfirmDelete from "@/components/ui/ConfirmDelete";
 
 export default function FacilitiesListPage() {
   const hydrated = useFacilitiesStore((s) => s.hydrated);
-  const facilities = useFacilitiesStore((s) => s.getSorted());
+  const facilities = useFacilitiesStore(selectSortedFacilities);
   const remove = useFacilitiesStore((s) => s.remove);
   const navigate = useNavigate();
-
-
 
   const [open, setOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -77,7 +75,10 @@ export default function FacilitiesListPage() {
         title="Delete Facility"
         description={
           <div>
-            <p className="text-xl">Are you sure you want to delete this facility? This action cannot be undone.</p>
+            <p className="text-xl">
+              Are you sure you want to delete this facility? This action cannot
+              be undone.
+            </p>
             {pendingName && (
               <p className="mt-2 text-xl">
                 Facility: <span className="font-bold">{pendingName}</span>
