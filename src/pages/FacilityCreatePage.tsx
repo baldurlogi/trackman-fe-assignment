@@ -4,13 +4,15 @@ import { useFacilitiesStore } from "@/store/facilities";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type z from "zod";
+
 
 const createSchema = facilitySchema.omit({ id: true, createdAt: true });
 type FormValues = z.infer<typeof createSchema>;
 
 export default function FacilitiesCreatePage() {
+  const navigate = useNavigate();
   const facilitiesCount = useFacilitiesStore((s) => s.facilities.length);
   const isFirst = facilitiesCount === 0;
 
@@ -33,8 +35,22 @@ export default function FacilitiesCreatePage() {
     defaultValues,
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Create Facility (valid):", data);
+  const onSubmit = async (data: FormValues) => {
+    const state = useFacilitiesStore.getState();
+    const isFirstAtSubmit = state.facilities.length === 0;
+
+    const payload = {
+      ...data,
+      isDefault: isFirstAtSubmit ? true : data.isDefault,
+    };
+
+    const created = state.create(payload);
+
+    if (!isFirstAtSubmit && data.isDefault) {
+      state.setDefault(created.id)
+    }
+
+    navigate("/facilities")
   };
 
   return (
@@ -137,7 +153,10 @@ export default function FacilitiesCreatePage() {
               <span className="flex-1">
                 <span className="text-sm font-medium text-gray-800">Default Facility</span>
                 <p className="mt-1 text-sm text-gray-500">
-                  Setting this facility as default will override the currently marked default facility.
+                  {isFirst
+                    ? "First facility is automatically the default."
+                    : "Setting this facility as default will override the currently marked default facility."
+                  }
                 </p>
               </span>
             </label>
