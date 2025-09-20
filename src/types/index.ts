@@ -12,7 +12,7 @@ export interface Facility {
   description: string;
   imageUrl: string;
   openingTime: TimeString;
-  closningTime: TimeString;
+  closingTime: TimeString;
   isDefault: boolean;
   createdAt?: Date;
 }
@@ -41,4 +41,6 @@ export type ButtonProps = {
   title?: string;
   icon?: React.ReactNode;
   containerClass?: string;
+  ariaLabel?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };

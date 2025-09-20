@@ -1,17 +1,15 @@
 import { type ButtonProps } from "@/types";
 
-const Button = ({ title, id, icon, containerClass }: ButtonProps) => {
+const Button = ({ title, id, icon, containerClass, ariaLabel, onClick }: ButtonProps) => {
   return (
     <button
       id={id}
+      aria-label={ariaLabel}
+      onClick={onClick}
       className={`rounded-md gap-1 py-2 font-bold ${containerClass}`}
     >
-      <span>
-        <div>
-          {icon}
-          {title}
-        </div>
-      </span>
+      {icon && <span className="inline-flex">{icon}</span>}
+      {title && <span>{title}</span>}
     </button>
   );
 };
