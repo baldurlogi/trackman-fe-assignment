@@ -2,19 +2,23 @@ import Button from "@/components/ui/Button";
 import { facilitySchema } from "@/schemas";
 import { useFacilitiesStore } from "@/store/facilities";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
-import { useForm } from "react-hook-form"
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import type z from "zod";
-
+import { z } from "zod";
+import type { TimeString, Facility } from "@/types";
 
 const createSchema = facilitySchema.omit({ id: true, createdAt: true });
 type FormValues = z.infer<typeof createSchema>;
 
 export default function FacilitiesCreatePage() {
   const navigate = useNavigate();
+
   const facilitiesCount = useFacilitiesStore((s) => s.facilities.length);
   const isFirst = facilitiesCount === 0;
+
+  const create = useFacilitiesStore((s) => s.create);
+  const setDefault = useFacilitiesStore((s) => s.setDefault);
 
   const defaultValues: FormValues = useMemo(
     () => ({
@@ -26,31 +30,55 @@ export default function FacilitiesCreatePage() {
       closingTime: "",
       isDefault: isFirst,
     }),
-    [isFirst]
+    [isFirst],
   );
 
-  const { register, handleSubmit, formState: { errors, isSubmitting, isValid }} = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<FormValues>({
     resolver: zodResolver(createSchema),
     mode: "onBlur",
     defaultValues,
   });
 
-  const onSubmit = async (data: FormValues) => {
-    const state = useFacilitiesStore.getState();
-    const isFirstAtSubmit = state.facilities.length === 0;
+  const [saving, setSaving] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-    const payload = {
-      ...data,
-      isDefault: isFirstAtSubmit ? true : data.isDefault,
-    };
+  const onSubmit = async (raw: FormValues) => {
+    if (saving) return;
+    setSubmitError(null);
+    setSaving(true);
 
-    const created = state.create(payload);
+    try {
+      const countNow = useFacilitiesStore.getState().facilities.length;
+      const isFirstNow = countNow === 0;
 
-    if (!isFirstAtSubmit && data.isDefault) {
-      state.setDefault(created.id)
+      const payload: Omit<Facility, "id" | "createdAt"> = {
+        name: raw.name.trim(),
+        address: raw.address.trim(),
+        description: raw.description.trim(),
+        imageUrl: raw.imageUrl.trim(),
+        openingTime: raw.openingTime as TimeString,
+        closingTime: raw.closingTime as TimeString,
+        isDefault: isFirstNow ? true : !!raw.isDefault,
+      };
+
+      const created = create(payload);
+
+      if (!isFirstNow && raw.isDefault) {
+        setDefault(created.id);
+      }
+      navigate("/facilities");
+    } catch (err) {
+      console.error(err);
+      setSubmitError(
+        err instanceof Error ? err.message : "Failed to created facility.",
+      );
+    } finally {
+      setSaving(false);
     }
-
-    navigate("/facilities")
   };
 
   return (
@@ -59,7 +87,9 @@ export default function FacilitiesCreatePage() {
 
       <div className="mx-auto w-full max-w-4xl rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <h2 className="mb-4 font-semibold text-gray-900">Facility Information</h2>
+          <h2 className="mb-4 font-semibold text-gray-900">
+            Facility Information
+          </h2>
 
           <div className="mb-4">
             <label htmlFor="name" className="block font-medium text-gray-800">
@@ -81,7 +111,10 @@ export default function FacilitiesCreatePage() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="address" className="block font-medium text-gray-800">
+            <label
+              htmlFor="address"
+              className="block font-medium text-gray-800"
+            >
               Address <span>*</span>
             </label>
             <input
@@ -101,7 +134,10 @@ export default function FacilitiesCreatePage() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="description" className="block font-medium text-gray-800">
+            <label
+              htmlFor="description"
+              className="block font-medium text-gray-800"
+            >
               Description <span>*</span>
             </label>
             <textarea
@@ -109,7 +145,9 @@ export default function FacilitiesCreatePage() {
               rows={4}
               {...register("description")}
               aria-invalid={!!errors.description}
-              aria-describedby={errors.description ? "description-error" : undefined}
+              aria-describedby={
+                errors.description ? "description-error" : undefined
+              }
               placeholder=""
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -121,7 +159,10 @@ export default function FacilitiesCreatePage() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-800">
+            <label
+              htmlFor="imageUrl"
+              className="block text-sm font-medium text-gray-800"
+            >
               Cover Image URL <span className="text-red-600">*</span>
             </label>
             <input
@@ -151,21 +192,27 @@ export default function FacilitiesCreatePage() {
                 className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500 disabled:opacity-60"
               />
               <span className="flex-1">
-                <span className="text-sm font-medium text-gray-800">Default Facility</span>
+                <span className="text-sm font-medium text-gray-800">
+                  Default Facility
+                </span>
                 <p className="mt-1 text-sm text-gray-500">
                   {isFirst
                     ? "First facility is automatically the default."
-                    : "Setting this facility as default will override the currently marked default facility."
-                  }
+                    : "Setting this facility as default will override the currently marked default facility."}
                 </p>
               </span>
             </label>
           </div>
 
-          <h2 className="mb-3 text-sm font-semibold text-gray-900">Working Hours</h2>
+          <h2 className="mb-3 text-sm font-semibold text-gray-900">
+            Working Hours
+          </h2>
           <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="openingTime" className="block text-sm font-medium text-gray-800">
+              <label
+                htmlFor="openingTime"
+                className="block text-sm font-medium text-gray-800"
+              >
                 Opening Time <span className="text-red-600">*</span>
               </label>
               <input
@@ -174,7 +221,9 @@ export default function FacilitiesCreatePage() {
                 step={60}
                 {...register("openingTime")}
                 aria-invalid={!!errors.openingTime}
-                aria-describedby={errors.openingTime ? "openingTime-error" : undefined}
+                aria-describedby={
+                  errors.openingTime ? "openingTime-error" : undefined
+                }
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
               />
               {errors.openingTime && (
@@ -185,7 +234,10 @@ export default function FacilitiesCreatePage() {
             </div>
 
             <div>
-              <label htmlFor="closingTime" className="block text-sm font-medium text-gray-800">
+              <label
+                htmlFor="closingTime"
+                className="block text-sm font-medium text-gray-800"
+              >
                 Closing Time <span className="text-red-600">*</span>
               </label>
               <input
@@ -194,7 +246,9 @@ export default function FacilitiesCreatePage() {
                 step={60}
                 {...register("closingTime")}
                 aria-invalid={!!errors.closingTime}
-                aria-describedby={errors.closingTime ? "closingTime-error" : undefined}
+                aria-describedby={
+                  errors.closingTime ? "closingTime-error" : undefined
+                }
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
               />
               {errors.closingTime && (
@@ -204,6 +258,15 @@ export default function FacilitiesCreatePage() {
               )}
             </div>
           </div>
+
+          {submitError && (
+            <div
+              role="alert"
+              className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+            >
+              {submitError}
+            </div>
+          )}
 
           <div className="mt-4 flex justify-end gap-3">
             <Link to="/facilities">
@@ -226,5 +289,5 @@ export default function FacilitiesCreatePage() {
         </form>
       </div>
     </div>
-  )
+  );
 }
