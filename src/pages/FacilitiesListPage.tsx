@@ -1,35 +1,21 @@
-import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import CardGrid from "@/components/ui/CardGrid";
 import { Link } from "react-router-dom";
-import { list, STORAGE_KEY } from "@/services/storage";
 import { getStatus } from "@/utils/time";
 import type { CardData } from "@/types";
+import { useFacilitiesStore } from "@/store/facilities";
 
 export default function FacilitiesListPage() {
-  const [cards, setCards] = useState<CardData[]>([]);
+  const hydrated = useFacilitiesStore((s) => s.hydrated);
+  const facilities = useFacilitiesStore((s) => s.getSorted());
 
-  const hydrate = () => {
-    const facilities = list();
-    const mapped: CardData[] = facilities.map((f) => ({
-      id: f.id,
-      title: f.name,
-      status: getStatus(f.openingTime, f.closningTime) === "Open" ? "Open" : "Closed",
-      image: f.imageUrl,
-      address: f.address,
-    }));
-    setCards(mapped);
-  }
-
-  useEffect(() => {
-    hydrate();
-
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) hydrate();
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [])
+  const cards: CardData[] = facilities.map((f) => ({
+    id: f.id,
+    title: f.name,
+    status: getStatus(f.openingTime, f.closningTime) === "Open" ? "Open" : "Closed",
+    image: f.imageUrl,
+    address: f.address,
+  }));
 
   return (
     <div className="px-30">
@@ -43,7 +29,9 @@ export default function FacilitiesListPage() {
         </Link>
       </div>
 
-      {cards.length === 0 ? (
+      {!hydrated ? (
+        <div className="py-12 text-center opacity-80">Loading...</div>
+      ) : cards.length === 0 ? (
         <div className="py-12 text-center opacity-80">
           <p>No facilities yet.</p>
           <p className="mt-2">

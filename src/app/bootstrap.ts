@@ -1,5 +1,6 @@
 import { list, replaceAll, STORAGE_KEY } from "@/services/storage";
 import { seedFacilities } from "@/data/seed";
+import { useFacilitiesStore } from "@/store/facilities";
 
 const SEEDED_FLAG = "trackman.seeded.v1";
 
@@ -22,4 +23,24 @@ export function ensureSeed() {
             window.localStorage.removeItem(SEEDED_FLAG);
         }
     });
+}
+
+export function initApp() {
+    if (!hasLocalStorage()) return;
+
+    ensureSeed();
+
+    useFacilitiesStore.getState().hydrate();
+
+    const onStorage = (e: StorageEvent) => {
+        if (e.key === STORAGE_KEY) {
+            useFacilitiesStore.getState().hydrate();
+
+            if (e.newValue === null) {
+                window.localStorage.removeItem(SEEDED_FLAG);
+            }
+        }
+    };
+
+    window.addEventListener("storage", onStorage);
 }
