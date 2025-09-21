@@ -1,4 +1,4 @@
-import FacilityCard from "./FacilityCard";
+import FacilityCardBase from "./FacilityCard";
 import type { Facility } from "@/types";
 import { memo } from "react";
 
@@ -26,7 +26,7 @@ function FacilityGrid({
     >
       {facilities.map((f) => (
         <div role="listitem" key={f.id}>
-          <FacilityCard
+          <FacilityCardBase
             facility={f}
             onEdit={onEdit}
             onDelete={onDelete}

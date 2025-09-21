@@ -14,6 +14,7 @@ export default function FacilitiesListPage() {
   const [open, setOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const setDefault = useFacilitiesStore((s) => s.setDefault);
 
   const pendingName = pendingId
     ? (facilities.find((f) => f.id === pendingId)?.name ?? "")
@@ -63,6 +64,7 @@ export default function FacilitiesListPage() {
           facilities={facilities}
           onEdit={(id) => navigate(`/facilities/${id}/edit`)}
           onDelete={requestDelete}
+          onSetDefault={setDefault}
         />
       )}
 

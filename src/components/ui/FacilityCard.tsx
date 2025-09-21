@@ -1,7 +1,7 @@
 import Button from "./Button";
 import { MapPin, Trash, Image as ImageIcon, Star } from "lucide-react";
 import type { Facility } from "@/types";
-import { useState, useCallback, memo } from "react";
+import { useState, useCallback } from "react";
 import { getStatus } from "@/utils/time";
 
 type Props = {
@@ -112,5 +112,5 @@ function FacilityCardBase({
   );
 }
 
-const FacilityCard = memo(FacilityCardBase);
-export default FacilityCard;
+// const FacilityCard = memo(FacilityCardBase);
+export default FacilityCardBase;
