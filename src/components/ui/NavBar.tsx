@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function NavBar() {
   return (
-    <nav className="w-full bg-grey-800 text-white pl-40 py-6 flex items-center">
+    <nav className="w-full bg-grey-800 text-white px-4 sm:px-6 lg:px-10 py-6 flex items-center">
       <div className="flex items-center gap-2">
         <img src={logo} alt="Trackman Logo" className="h-6 w-auto" />
       </div>

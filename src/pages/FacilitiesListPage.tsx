@@ -36,7 +36,7 @@ export default function FacilitiesListPage() {
   }
 
   return (
-    <div className="px-30">
+    <div className="px-4 md:px-10 lg:px-20 xl:px-30">
       <div className="py-6 flex justify-end">
         <Link to="/facilities/new">
           <Button
