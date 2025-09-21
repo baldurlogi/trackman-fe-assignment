@@ -13,8 +13,7 @@ export type ButtonProps = {
   containerClass?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
-const base =
-  "inline-flex items-center justify-center gap-2 font-bold rounded-lg focus-brand disabled:opacity-60 disabled:cursor-not-allowed";
+const base = "inline-flex items-center justify-center gap-2 font-bold rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 disabled:opacity-60 disabled:cursor-not-allowed";
 
 const sizes: Record<Size, string> = {
   md: "h-10 px-4 text-body",

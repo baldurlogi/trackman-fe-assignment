@@ -1,12 +1,20 @@
 import { Outlet } from "react-router-dom";
 import NavBar from "./components/ui/NavBar";
+import SkipLink from "./components/ui/SkipLink";
 
 function App() {
   return (
-    <main className=" mx-auto text-center">
+    <>
+      <SkipLink />
       <NavBar />
-      <Outlet />
-    </main>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto text-left focus:outline-none"
+      >
+        <Outlet />
+      </main>
+    </>
   );
 }
 
