@@ -1,4 +1,3 @@
-// src/components/ConfirmDialog.tsx
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Button from "./Button";
@@ -28,21 +27,14 @@ export default function ConfirmDelete({
   const dialogRef = useRef<HTMLDivElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
 
-  // mount container for portal
-  const container = document.body;
-
-  // focus management
   useEffect(() => {
     if (!open) return;
     lastFocused.current = document.activeElement as HTMLElement | null;
-
-    // focus dialog
     setTimeout(() => dialogRef.current?.focus(), 0);
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onOpenChange(false);
       if (e.key === "Tab") {
-        // simple trap: keep focus inside dialog
         const focusables = dialogRef.current?.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
@@ -50,7 +42,6 @@ export default function ConfirmDelete({
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
         const active = document.activeElement as HTMLElement;
-
         if (e.shiftKey && active === first) {
           e.preventDefault();
           last.focus();
@@ -64,7 +55,6 @@ export default function ConfirmDelete({
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      // return focus to trigger
       lastFocused.current?.focus?.();
     };
   }, [open, onOpenChange]);
@@ -72,10 +62,7 @@ export default function ConfirmDelete({
   if (!open) return null;
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      aria-hidden={!open}
-    >
+    <div className="fixed inset-0 z-50 grid place-items-center">
       {/* overlay */}
       <div
         className="absolute inset-0 bg-black/60"
@@ -90,44 +77,47 @@ export default function ConfirmDelete({
         aria-labelledby="confirm-title"
         aria-describedby="confirm-desc"
         tabIndex={-1}
-        className="relative z-10 w-[min(92vw,720px)] max-w-lg rounded-xl text-xl bg-white p-4 shadow-2xl"
+        className="relative z-10 w-[min(92vw,720px)] rounded-xl bg-white p-6 shadow-2xl"
       >
         {/* close (X) */}
-        <div className="flex items-center justify-between">
-          <Button
-            id="close"
-            aria-label="Close dialog"
-            onClick={() => onOpenChange(false)}
-            icon={<X size={24} />}
-            containerClass="absolute right-2 item-center flex rounded text-gray-500 bg-gray-100"
-          />
+        <Button
+          id="close"
+          type="button"
+          aria-label="Close dialog"
+          onClick={() => onOpenChange(false)}
+          icon={<X size={24} />}
+          variant="ghost"
+          containerClass="absolute top-3 right-3 h-8 w-8 items-center justify-center rounded bg-grey-100 text-grey-600 hover:bg-grey-200"
+        />
 
-          <h3 id="confirm-title" className="font-semibold text-gray-900">
-            {title}
-          </h3>
-        </div>
+        <h3 id="confirm-title" className="text-grey-800">{title}</h3>
 
-        <div className="-mx-4 my-3 h-px bg-grey-200" />
+        <div className="-mx-6 my-4 h-px bg-grey-200" />
 
         {description && (
-          <div id="confirm-desc" className="mt-3 text-gray-700">
+          <div id="confirm-desc" className="text-grey-800">
             {description}
           </div>
         )}
 
-        <div className="-mx-4 my-3 h-px bg-grey-200" />
+        <div className="-mx-6 my-4 h-px bg-grey-200" />
 
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="mt-2 flex justify-end gap-3">
           <Button
             id="confirm-cancel"
+            type="button"
             title={cancelLabel}
-            containerClass="bg-gray-100 text-gray-800 hover:bg-gray-200 px-6"
+            variant="secondary"
+            containerClass="px-6"
             onClick={() => onOpenChange(false)}
           />
           <Button
             id="confirm-yes"
+            type="button"
             title={confirmLabel}
-            containerClass={`text-white px-6 ${confirmDisabled ? "bg-orange-300" : "bg-orange-500 hover:bg-orange-600"}`}
+            variant="primary"
+            containerClass="px-6"
+            disabled={!!confirmDisabled}
             onClick={async () => {
               if (confirmDisabled) return;
               await onConfirm();
@@ -137,6 +127,6 @@ export default function ConfirmDelete({
         </div>
       </div>
     </div>,
-    container,
+    document.body,
   );
 }

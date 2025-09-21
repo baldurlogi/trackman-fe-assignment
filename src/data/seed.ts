@@ -10,7 +10,7 @@ export const seedFacilities: Facility[] = [
         openingTime: "08:00",
         closingTime: "22:00",
         isDefault: true,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
     },
     {
         id: "seed-2",
@@ -21,7 +21,7 @@ export const seedFacilities: Facility[] = [
         openingTime: "09:00",
         closingTime: "17:00",
         isDefault: false,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
     },
     {
         id: "seed-3",
@@ -32,7 +32,7 @@ export const seedFacilities: Facility[] = [
         openingTime: "22:00",
         closingTime: "06:00",
         isDefault: false,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
     },
     {
         id: "seed-4",
@@ -43,7 +43,7 @@ export const seedFacilities: Facility[] = [
         openingTime: "01:00",
         closingTime: "23:00",
         isDefault: false,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
     },
     {
         id: "seed-5",
@@ -54,7 +54,7 @@ export const seedFacilities: Facility[] = [
         openingTime: "08:00",
         closingTime: "09:00",
         isDefault: false,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
     },
     {
         id: "seed-6",
@@ -65,6 +65,6 @@ export const seedFacilities: Facility[] = [
         openingTime: "08:00",
         closingTime: "22:00",
         isDefault: false,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
     },
 ]

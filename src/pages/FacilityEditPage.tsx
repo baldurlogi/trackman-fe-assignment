@@ -1,4 +1,5 @@
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import { facilitySchema } from "@/schemas";
 import { useFacilitiesStore } from "@/store/facilities";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,13 +59,13 @@ export default function FacilityEditPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   if (!hydrated) {
-    return <div className="p-6 opacity-80">Loading...</div>;
+    return <div className="px-6 py-8 opacity-80">Loading...</div>;
   }
 
   if (!facility || !id) {
     return (
-      <div className="p-6">
-        <h1 className="text-xl font-semibold">Facility not found</h1>
+      <div className="mx-auto max-w-7xl px-6 md:px-10 lg:px-14 py-8 text-left">
+        <h1 className="mb-2">Facility not found</h1>
         <p className="mt-2">
           The requested facility doesn’t exist.
           <Link to="/facilities" className="ml-2 underline">Back to list</Link>
@@ -77,21 +78,20 @@ export default function FacilityEditPage() {
     if (saving) return;
     setSubmitError(null);
     setSaving(true);
-
     try {
-        const state = useFacilitiesStore.getState();
-        const allBefore = state.facilities;
-        const isOnlyFacility = allBefore.length === 1;
-        const wasDefault = facility.isDefault;
-        const wantsDefault = !!raw.isDefault;
+      const state = useFacilitiesStore.getState();
+      const allBefore = state.facilities;
+      const isOnlyFacility = allBefore.length === 1;
+      const wasDefault = facility.isDefault;
+      const wantsDefault = !!raw.isDefault;
 
-        const patch: Partial<Facility> = {
-            name: raw.name.trim(),
-            address: raw.address.trim(),
-            description: raw.description.trim(),
-            imageUrl: raw.imageUrl.trim(),
-            openingTime: raw.openingTime as TimeString,
-            closingTime: raw.closingTime as TimeString,
+      const patch: Partial<Facility> = {
+        name: raw.name.trim(),
+        address: raw.address.trim(),
+        description: raw.description.trim(),
+        imageUrl: raw.imageUrl.trim(),
+        openingTime: raw.openingTime as TimeString,
+        closingTime: raw.closingTime as TimeString,
       };
 
       update(id, patch);
@@ -99,251 +99,159 @@ export default function FacilityEditPage() {
       if (isOnlyFacility) {
         if (!wasDefault) setDefault(id);
       } else {
-        if (!wasDefault && wantsDefault) {
-            setDefault(id);
-        }
+        if (!wasDefault && wantsDefault) setDefault(id);
         else if (wasDefault && !wantsDefault) {
-            const fallback = allBefore.find((f) => f.id !== id);
-            if (fallback) setDefault(fallback.id);
+          const fallback = allBefore.find((f) => f.id !== id);
+          if (fallback) setDefault(fallback.id);
         }
       }
       navigate("/facilities");
     } catch (err) {
-        console.error(err);
-        setSubmitError(
-            err instanceof Error ? err.message : "Failed to update facility."
-        );
+      console.error(err);
+      setSubmitError(err instanceof Error ? err.message : "Failed to update facility.");
     } finally {
-        setSaving(false);
+      setSaving(false);
     }
   };
 
   const imagePreview = watch("imageUrl");
 
   return (
-    <div className="px-6 py-8">
-      <h1 className="mb-4 text-2xl font-semibold">Edit Facility</h1>
+    <div className="mx-auto max-w-7xl px-6 md:px-10 lg:px-14 py-8 text-left">
+      <h1 className="mb-6">Edit Facility</h1>
 
-      <div className="mx-auto w-full max-w-4xl rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+      <div className="w-full rounded-2xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-black/5">
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <h2 className="mb-4 text-sm font-semibold text-gray-900">
-            Facility Information
-          </h2>
+          <h2 className="mb-4 text-grey-800">Facility Information</h2>
 
           {/* Name */}
-          <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-800"
-            >
-              Facility Name <span className="text-red-600">*</span>
-            </label>
-            <input
-              id="name"
-              type="text"
-              {...register("name")}
-              aria-invalid={!!errors.name}
-              aria-describedby={errors.name ? "name-error" : undefined}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
-            />
-            {errors.name && (
-              <p id="name-error" className="mt-1 text-sm text-red-600">
-                {errors.name.message}
-              </p>
-            )}
-          </div>
+          <Input
+            id="name"
+            label="Facility Name *"
+            {...register("name")}
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? "name-error" : undefined}
+            error={errors.name?.message}
+          />
 
           {/* Address */}
-          <div className="mb-4">
-            <label
-              htmlFor="address"
-              className="block text-sm font-medium text-gray-800"
-            >
-              Address <span className="text-red-600">*</span>
-            </label>
-            <input
-              id="address"
-              type="text"
-              {...register("address")}
-              aria-invalid={!!errors.address}
-              aria-describedby={errors.address ? "address-error" : undefined}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
-            />
-            {errors.address && (
-              <p id="address-error" className="mt-1 text-sm text-red-600">
-                {errors.address.message}
-              </p>
-            )}
-          </div>
+          <Input
+            id="address"
+            label="Address *"
+            {...register("address")}
+            aria-invalid={!!errors.address}
+            aria-describedby={errors.address ? "address-error" : undefined}
+            error={errors.address?.message}
+          />
 
           {/* Description */}
           <div className="mb-4">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-800"
-            >
-              Description <span className="text-red-600">*</span>
+            <label htmlFor="description" className="block font-medium text-grey-800">
+              Description *
             </label>
             <textarea
               id="description"
               rows={4}
               {...register("description")}
               aria-invalid={!!errors.description}
-              aria-describedby={
-                errors.description ? "description-error" : undefined
-              }
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
+              aria-describedby={errors.description ? "description-error" : undefined}
+              className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-grey-800
+                          placeholder:text-grey-600/60 focus:outline-none focus:ring-2
+                          ${errors.description ? "border-error focus:ring-error" : "border-grey-200 focus:ring-orange-400"}`}
             />
             {errors.description && (
-              <p id="description-error" className="mt-1 text-sm text-red-600">
+              <p id="description-error" className="mt-1 text-error">
                 {errors.description.message}
               </p>
             )}
           </div>
 
-          {/* Image URL + Tiny Preview */}
-          <div className="mb-6">
-            <label
-              htmlFor="imageUrl"
-              className="block text-sm font-medium text-gray-800"
-            >
-              Cover Image URL <span className="text-red-600">*</span>
-            </label>
-            <input
-              id="imageUrl"
-              type="url"
-              inputMode="url"
-              {...register("imageUrl")}
-              aria-invalid={!!errors.imageUrl}
-              aria-describedby={errors.imageUrl ? "imageUrl-error" : undefined}
-              placeholder="https://example.com/cover.jpg"
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
-            />
-            {errors.imageUrl && (
-              <p id="imageUrl-error" className="mt-1 text-sm text-red-600">
-                {errors.imageUrl.message}
-              </p>
-            )}
-            {imagePreview && (
-              <div className="mt-3">
-                {/* small visual confirmation */}
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="h-24 w-40 rounded-md object-cover ring-1 ring-black/5"
-                  onError={(e) => {
-                    // hide broken preview
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              </div>
-            )}
-          </div>
+          {/* Image URL + preview */}
+          <Input
+            id="imageUrl"
+            label="Cover Image URL *"
+            type="url"
+            inputMode="url"
+            placeholder="https://example.com/cover.jpg"
+            {...register("imageUrl")}
+            aria-invalid={!!errors.imageUrl}
+            aria-describedby={errors.imageUrl ? "imageUrl-error" : undefined}
+            error={errors.imageUrl?.message}
+          />
+          {imagePreview && (
+            <div className="mt-3">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="h-24 w-40 rounded-md object-cover ring-1 ring-black/5"
+                onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+              />
+            </div>
+          )}
 
-          {/* Default Facility (enabled on edit) */}
+          {/* Default Facility */}
           <div className="mb-6">
             <label className="flex items-start gap-3">
               <input
                 id="isDefault"
                 type="checkbox"
                 {...register("isDefault")}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                className="mt-1 h-4 w-4 rounded border-grey-200 accent-orange-400"
               />
               <span className="flex-1">
-                <span className="text-sm font-medium text-gray-800">
-                  Default Facility
-                </span>
-                <p className="mt-1 text-sm text-gray-500">
-                  Setting this facility as default will override the currently
-                  marked default facility.
+                <span className="font-medium text-grey-800">Default Facility</span>
+                <p className="mt-1 text-grey-600">
+                  Setting this facility as default will override the currently marked default facility.
                 </p>
               </span>
             </label>
           </div>
 
-          {/* Working Hours */}
-          <h2 className="mb-3 text-sm font-semibold text-gray-900">
-            Working Hours
-          </h2>
+          <h2 className="mb-3 text-grey-800">Working Hours</h2>
           <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor="openingTime"
-                className="block text-sm font-medium text-gray-800"
-              >
-                Opening Time <span className="text-red-600">*</span>
-              </label>
-              <input
-                id="openingTime"
-                type="time"
-                step={60}
-                {...register("openingTime")}
-                aria-invalid={!!errors.openingTime}
-                aria-describedby={
-                  errors.openingTime ? "openingTime-error" : undefined
-                }
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
-              />
-              {errors.openingTime && (
-                <p id="openingTime-error" className="mt-1 text-sm text-red-600">
-                  {errors.openingTime.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="closingTime"
-                className="block text-sm font-medium text-gray-800"
-              >
-                Closing Time <span className="text-red-600">*</span>
-              </label>
-              <input
-                id="closingTime"
-                type="time"
-                step={60}
-                {...register("closingTime")}
-                aria-invalid={!!errors.closingTime}
-                aria-describedby={
-                  errors.closingTime ? "closingTime-error" : undefined
-                }
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
-              />
-              {errors.closingTime && (
-                <p id="closingTime-error" className="mt-1 text-sm text-red-600">
-                  {errors.closingTime.message}
-                </p>
-              )}
-            </div>
+            <Input
+              id="openingTime"
+              label="Opening Time *"
+              type="time"
+              step={60}
+              {...register("openingTime")}
+              aria-invalid={!!errors.openingTime}
+              aria-describedby={errors.openingTime ? "openingTime-error" : undefined}
+              error={errors.openingTime?.message}
+            />
+            <Input
+              id="closingTime"
+              label="Closing Time *"
+              type="time"
+              step={60}
+              {...register("closingTime")}
+              aria-invalid={!!errors.closingTime}
+              aria-describedby={errors.closingTime ? "closingTime-error" : undefined}
+              error={errors.closingTime?.message}
+            />
           </div>
 
-          {/* Submit error (if any) */}
+          {/* Submit error */}
           {submitError && (
             <div
               role="alert"
-              className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+              className="mb-4 rounded-lg border border-error-light bg-error-light px-3 py-2 text-error"
             >
               {submitError}
             </div>
           )}
 
-          {/* Actions (no save logic yet in this task) */}
+          {/* Actions */}
           <div className="mt-2 flex justify-end gap-3">
             <Link to="/facilities">
-              <Button
-                id="cancel-edit"
-                title="Cancel"
-                containerClass="px-6 py-2 bg-gray-100 text-gray-800 hover:bg-gray-200"
-              />
+              <Button id="cancel-edit" title="Cancel" variant="secondary" />
             </Link>
             <Button
               id="submit-edit"
-              title="Save Changes"
-              containerClass={`px-6 py-2 text-white ${
-                isSubmitting || !isValid
-                  ? "bg-orange-300 cursor-not-allowed"
-                  : "bg-orange-500 hover:bg-orange-600"
-              }`}
+              title="Update Facility"
+              variant="primary"
+              type="submit"
+              disabled={isSubmitting || !isValid}
             />
           </div>
         </form>

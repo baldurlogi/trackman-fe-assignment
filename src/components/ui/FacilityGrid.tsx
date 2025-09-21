@@ -1,29 +1,41 @@
-import Card from "./FalicyCard";
+import FacilityCard from "./FacilityCard";
 import type { Facility } from "@/types";
-import { useFacilitiesStore } from "@/store/facilities";
+import { memo } from "react";
 
 type Props = {
   facilities: Facility[];
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-}
+  onSetDefault?: (id: string) => void;
+  className?: string;
+};
 
-const CardGrid = ({ facilities, onEdit, onDelete }: Props) => {
-  const setDefault = useFacilitiesStore((s) => s.setDefault);
+const noop = () => {};
 
+function FacilityGrid({
+  facilities,
+  onEdit = noop,
+  onDelete = noop,
+  onSetDefault = noop,
+  className = "",
+}: Props) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div
+      role="list"
+      className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}
+    >
       {facilities.map((f) => (
-        <Card
-          key={f.id}
-          facility={f}
-          onEdit={onEdit ?? (() => {})}
-          onDelete={onDelete ?? (() => {})}
-          onSetDefault={setDefault}
-        />
+        <div role="listitem" key={f.id}>
+          <FacilityCard
+            facility={f}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onSetDefault={onSetDefault}
+          />
+        </div>
       ))}
     </div>
   );
-};
+}
 
-export default CardGrid;
+export default memo(FacilityGrid);

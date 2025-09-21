@@ -74,3 +74,15 @@
     @apply font-normal text-text-s leading-text-s;
   }
 }
+
+@layer utilities {
+  .card {
+    @apply rounded-2xl bg-white shadow-sm ring-1 ring-black/5;
+  }
+  .card-hover {
+    @apply hover:shadow-lg transition-shadow;
+  }
+  .badge {
+    @apply px-2 py-1 rounded-full text-text-s font-bold;
+  }
+}

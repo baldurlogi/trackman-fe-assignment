@@ -50,7 +50,7 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
         const f: Facility = {
           ...rest,
           id: id ?? crypto.randomUUID(),
-          createdAt: createdAt ?? new Date(),
+          createdAt: createdAt ?? new Date().toISOString(),
         };
         set(
           (s) => ({ facilities: [...s.facilities, f] }),
