@@ -61,10 +61,6 @@ export function list(): Facility[] {
   return ensure().facilities.slice();
 }
 
-export function getById(id: string): Facility | undefined {
-  return ensure().facilities.find((f) => f.id === id);
-}
-
 export function create(f: Facility): Facility {
   const db = ensure();
   if (db.facilities.some((x) => x.id == f.id)) {

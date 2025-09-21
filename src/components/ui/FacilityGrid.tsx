@@ -1,14 +1,6 @@
 import FacilityCardBase from "./FacilityCard";
-import type { Facility } from "@/types";
+import type { FacilityListProps } from "@/types";
 import { memo } from "react";
-
-type Props = {
-  facilities: Facility[];
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
-  onSetDefault?: (id: string) => void;
-  className?: string;
-};
 
 const noop = () => {};
 
@@ -18,7 +10,7 @@ function FacilityGrid({
   onDelete = noop,
   onSetDefault = noop,
   className = "",
-}: Props) {
+}: FacilityListProps) {
   return (
     <div
       role="list"

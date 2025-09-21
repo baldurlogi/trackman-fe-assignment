@@ -107,7 +107,9 @@ src/
   app/            # bootstrap + router
   assets/         # logo
   components/ui/  # UI primitives
+  constants/      # constants
   data/           # seed data
+  hooks/          # Hooks
   pages/          # FacilitiesList, FacilityCreate, FacilityEdit
   schemas/        # Zod schemas
   services/       # storage (localStorage CRUD)

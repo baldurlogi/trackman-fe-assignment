@@ -10,11 +10,11 @@ export default function FacilitiesListPage() {
   const facilities = useFacilitiesStore(selectSortedFacilities);
   const remove = useFacilitiesStore((s) => s.remove);
   const navigate = useNavigate();
+  const setDefault = useFacilitiesStore((s) => s.setDefault);
 
   const [open, setOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const setDefault = useFacilitiesStore((s) => s.setDefault);
 
   const pendingName = pendingId
     ? (facilities.find((f) => f.id === pendingId)?.name ?? "")
@@ -37,12 +37,13 @@ export default function FacilitiesListPage() {
   }
 
   return (
-    <div className="px-4 md:px-10 lg:px-20 xl:px-30">
+    <div className="px-4 m-8 md:px-10 lg:px-20 xl:px-30">
       <div className="py-6 flex justify-end">
         <Link to="/facilities/new">
           <Button
             containerClass="text-white bg-orange-400 flex text-2xl justify-end px-12 py-3"
             title={"Create Facility"}
+            ariaLabel="Create Facility"
             id="create-facility"
           />
         </Link>

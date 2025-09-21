@@ -1,55 +1,34 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonProps } from "@/types";
+import { base, sizes, variants } from "@/constants";
+import { forwardRef } from "react";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
-type Size = "md" | "sm";
-
-export type ButtonProps = {
-  id: string;
-  title?: string;
-  icon?: ReactNode;
-  variant?: Variant;
-  size?: Size;
-  ariaLabel?: string;
-  containerClass?: string;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
-
-const base =
-  "inline-flex items-center justify-center gap-2 font-bold rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 disabled:opacity-60 disabled:cursor-not-allowed";
-
-const sizes: Record<Size, string> = {
-  md: "h-10 px-4 text-body",
-  sm: "h-8 px-3 text-text-s",
-};
-
-const variants: Record<Variant, string> = {
-  primary:
-    "text-white bg-orange-400 hover:bg-orange-600 disabled:bg-orange-200",
-  secondary: "bg-grey-100 text-grey-800 hover:bg-grey-200",
-  ghost: "bg-transparent text-grey-800 hover:bg-grey-100",
-  danger: "text-white bg-error hover:bg-[#d51f30]",
-};
-
-export default function Button({
-  id,
-  title,
-  icon,
-  variant = "secondary",
-  size = "md",
-  ariaLabel,
-  containerClass = "",
-  type = "button",
-  ...rest
-}: ButtonProps) {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    id,
+    title,
+    icon,
+    variant = "secondary",
+    size = "md",
+    ariaLabel,
+    containerClass = "",
+    type = "button",
+    ...rest
+  },
+  ref,
+) {
   return (
     <button
       id={id}
       aria-label={ariaLabel}
       type={type}
-      className={`${base}, ${sizes[size]} ${variants[variant]} ${containerClass}`}
+      ref={ref}
+      className={`${base} ${sizes[size]} ${variants[variant]} ${containerClass}`}
       {...rest}
     >
       {icon && <span className="inline-flex">{icon}</span>}
       {title && <span>{title}</span>}
     </button>
   );
-}
+});
+
+export default Button;

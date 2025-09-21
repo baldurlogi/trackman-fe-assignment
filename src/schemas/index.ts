@@ -6,23 +6,26 @@ const timeString = z
   .string()
   .regex(TIME_REGEX, "Time must be 24h HH:MM (e.g. 08:00)");
 
+const nonEmpty = (label: string) =>
+  z.string().trim().min(1, `${label} is required`);
+
 const httpUrl = z
   .url("Must be a valid URL")
   .refine((u) => /^https?:\/\//i.test(u), {
-    message: "URL must start with httpor https",
+    message: "URL must start with http or https",
   });
 
 export const facilitySchema = z
   .object({
     id: z.string(),
-    name: z.string().min(1, "Name is required"),
-    address: z.string().min(1, "Address is required"),
-    description: z.string().min(1, "Description is required"),
+    name: nonEmpty("Name"),
+    address: nonEmpty("Address"),
+    description: nonEmpty("Description"),
     imageUrl: httpUrl,
     openingTime: timeString,
     closingTime: timeString,
     isDefault: z.boolean(),
-    createdAt: z.date().optional(),
+    createdAt: z.iso.datetime().optional(),
   })
   .refine((v) => v.openingTime !== v.closingTime, {
     message: "Opening and closing time cannot be equal",
@@ -33,3 +36,10 @@ export type FacilityForm = z.infer<typeof facilitySchema>;
 
 export const validateFacility = (data: unknown) =>
   facilitySchema.safeParse(data);
+
+export const facilityCreateSchema = facilitySchema.omit({
+  id: true,
+  createdAt: true,
+});
+
+export const facilityEditSchema = facilityCreateSchema;

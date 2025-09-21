@@ -1,10 +1,4 @@
-import type { InputHTMLAttributes } from "react";
-
-type Props = InputHTMLAttributes<HTMLInputElement> & {
-  error?: string;
-  label?: string;
-  hint?: string;
-};
+import type { InputProps } from "@/types";
 
 export default function Input({
   id,
@@ -13,8 +7,7 @@ export default function Input({
   error,
   className = "",
   ...rest
-}: Props) {
-  // choose border & focus color based on error
+}: InputProps) {
   const borderClasses = error
     ? "border-error focus:ring-error"
     : "border-grey-200 focus:ring-orange-400";
@@ -36,11 +29,8 @@ export default function Input({
         {...rest}
       />
 
-      {error ? (
-        <p className="mt-1 text-error">{error}</p>
-      ) : hint ? (
-        <p className="mt-1 text-grey-600">{hint}</p>
-      ) : null}
+      {error && <p className="mt-1 text-error">{error}</p>}
+      {!error && hint && <p className="mt-1 text-grey-600">{hint}</p>}
     </div>
   );
 }
