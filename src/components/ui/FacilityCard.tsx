@@ -76,7 +76,9 @@ function FacilityCardBase({
         <h2 className="font-semibold truncate">{name}</h2>
         <span
           className={`px-2 py-0.5 rounded-full text-lg font-semibold ${
-            isOpen ? "bg-success-light text-success" : "bg-error-light text-error"
+            isOpen
+              ? "bg-success-light text-success"
+              : "bg-error-light text-error"
           }`}
         >
           {status}

@@ -48,7 +48,7 @@ export default function ConfirmDelete({
       }
       if (e.key === "Tab") {
         const nodes = dialogRef.current?.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
         if (!nodes || nodes.length === 0) return;
 
@@ -105,7 +105,9 @@ export default function ConfirmDelete({
           containerClass="absolute top-3 right-3 h-8 w-8 items-center justify-center rounded bg-grey-100 text-grey-600 hover:bg-grey-200 focus-visible:ring-2 focus-visible:ring-orange-400"
         />
 
-        <h3 id="confirm-title" className="text-grey-800">{title}</h3>
+        <h3 id="confirm-title" className="text-grey-800">
+          {title}
+        </h3>
 
         <div className="-mx-6 my-4 h-px bg-grey-200" />
 
@@ -142,6 +144,6 @@ export default function ConfirmDelete({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

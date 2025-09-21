@@ -13,7 +13,7 @@ export function getNowMinutes(d: Date = new Date()): number {
 export function isOpenAt(
   nowMinutes: number,
   openingTime: string,
-  closingTime: string
+  closingTime: string,
 ): boolean {
   const open = minutesFromHHMM(openingTime);
   const close = minutesFromHHMM(closingTime);
@@ -28,7 +28,9 @@ export function isOpenAt(
 export function getStatus(
   openingTime: string,
   closingTime: string,
-  at: Date = new Date()
+  at: Date = new Date(),
 ) {
-  return isOpenAt(getNowMinutes(at), openingTime, closingTime) ? "Open" : "Closed";
+  return isOpenAt(getNowMinutes(at), openingTime, closingTime)
+    ? "Open"
+    : "Closed";
 }

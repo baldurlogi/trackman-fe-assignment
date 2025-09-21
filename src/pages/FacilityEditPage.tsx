@@ -68,7 +68,9 @@ export default function FacilityEditPage() {
         <h1 className="mb-2">Facility not found</h1>
         <p className="mt-2">
           The requested facility doesn’t exist.
-          <Link to="/facilities" className="ml-2 underline">Back to list</Link>
+          <Link to="/facilities" className="ml-2 underline">
+            Back to list
+          </Link>
         </p>
       </div>
     );
@@ -108,7 +110,9 @@ export default function FacilityEditPage() {
       navigate("/facilities");
     } catch (err) {
       console.error(err);
-      setSubmitError(err instanceof Error ? err.message : "Failed to update facility.");
+      setSubmitError(
+        err instanceof Error ? err.message : "Failed to update facility.",
+      );
     } finally {
       setSaving(false);
     }
@@ -146,7 +150,10 @@ export default function FacilityEditPage() {
 
           {/* Description */}
           <div className="mb-4">
-            <label htmlFor="description" className="block font-medium text-grey-800">
+            <label
+              htmlFor="description"
+              className="block font-medium text-grey-800"
+            >
               Description *
             </label>
             <textarea
@@ -154,7 +161,9 @@ export default function FacilityEditPage() {
               rows={4}
               {...register("description")}
               aria-invalid={!!errors.description}
-              aria-describedby={errors.description ? "description-error" : undefined}
+              aria-describedby={
+                errors.description ? "description-error" : undefined
+              }
               className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-grey-800
                           placeholder:text-grey-600/60 focus:outline-none focus:ring-2
                           ${errors.description ? "border-error focus:ring-error" : "border-grey-200 focus:ring-orange-400"}`}
@@ -184,7 +193,9 @@ export default function FacilityEditPage() {
                 src={imagePreview}
                 alt="Preview"
                 className="h-24 w-40 rounded-md object-cover ring-1 ring-black/5"
-                onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+                onError={(e) =>
+                  ((e.target as HTMLImageElement).style.display = "none")
+                }
               />
             </div>
           )}
@@ -199,9 +210,12 @@ export default function FacilityEditPage() {
                 className="mt-1 h-4 w-4 rounded border-grey-200 accent-orange-400"
               />
               <span className="flex-1">
-                <span className="font-medium text-grey-800">Default Facility</span>
+                <span className="font-medium text-grey-800">
+                  Default Facility
+                </span>
                 <p className="mt-1 text-grey-600">
-                  Setting this facility as default will override the currently marked default facility.
+                  Setting this facility as default will override the currently
+                  marked default facility.
                 </p>
               </span>
             </label>
@@ -216,7 +230,9 @@ export default function FacilityEditPage() {
               step={60}
               {...register("openingTime")}
               aria-invalid={!!errors.openingTime}
-              aria-describedby={errors.openingTime ? "openingTime-error" : undefined}
+              aria-describedby={
+                errors.openingTime ? "openingTime-error" : undefined
+              }
               error={errors.openingTime?.message}
             />
             <Input
@@ -226,7 +242,9 @@ export default function FacilityEditPage() {
               step={60}
               {...register("closingTime")}
               aria-invalid={!!errors.closingTime}
-              aria-describedby={errors.closingTime ? "closingTime-error" : undefined}
+              aria-describedby={
+                errors.closingTime ? "closingTime-error" : undefined
+              }
               error={errors.closingTime?.message}
             />
           </div>

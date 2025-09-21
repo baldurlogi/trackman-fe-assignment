@@ -116,7 +116,7 @@ export const useFacilitiesStore = create<FacilitiesStore>()(
       },
 
       getSorted() {
-        return sortFacilities(get().facilities)
+        return sortFacilities(get().facilities);
       },
     }),
     { name: "facilities" },
