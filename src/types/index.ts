@@ -14,7 +14,7 @@ export interface Facility {
   openingTime: TimeString;
   closingTime: TimeString;
   isDefault: boolean;
-  createdAt?: Date;
+  createdAt: string;
 }
 
 export const setDefaultFacility = (

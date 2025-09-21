@@ -1,4 +1,4 @@
-import Card from "./Card";
+import Card from "./FalicyCard";
 import type { Facility } from "@/types";
 import { useFacilitiesStore } from "@/store/facilities";
 

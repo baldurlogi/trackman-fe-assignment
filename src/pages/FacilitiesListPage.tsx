@@ -1,5 +1,5 @@
 import Button from "@/components/ui/Button";
-import CardGrid from "@/components/ui/CardGrid";
+import CardGrid from "@/components/ui/FacilityGrid";
 import { Link, useNavigate } from "react-router-dom";
 import { useFacilitiesStore, selectSortedFacilities } from "@/store/facilities";
 import { useState } from "react";

@@ -1,7 +1,7 @@
 import logo from "@/assets/logo-trackman.png";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+const NavBar = () => {
   return (
     <nav className="w-full bg-grey-800 text-white pl-40 py-6 flex items-center">
       <div className="flex items-center gap-2">
@@ -20,4 +20,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavBar;
